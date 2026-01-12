@@ -4,7 +4,7 @@ Flexible timer for Waybar with mouse controls and CLI commands.
 
 ## Preview
 
-![Timer Preview](asssets/preview.gif)
+![Timer Preview](assets/preview.gif)
 
 ## Features
 
@@ -261,7 +261,7 @@ Example: `RUNNING|300|1703123456|0|1703123456|2`
 
 When a timer completes, it sends a notification.
 
-![Timer Notification](asssets/notification.png)
+![Timer Notification](assets/notification.png)
 
 ## Behavior Details
 

@@ -11,6 +11,7 @@ Flexible timer for Waybar with mouse controls and CLI commands.
 - Preset system for quick duration selection
 - Desktop notifications on timer completion
 - Visual indicators for multiple timer states: disabled, idle, select, running, paused, done
+- Tooltip messages with helpful hints 
 - Low/No CPU usage
 
 ## Requirements

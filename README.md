@@ -52,8 +52,6 @@ Flexible timer for Waybar with mouse controls and CLI commands.
    }
    ```
 
-   > Note: Replace `...timer.sh` with the path where you placed the script.
-
 3. Add to Waybar style (`~/.config/waybar/style.css`):
 
    <details>

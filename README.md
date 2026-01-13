@@ -33,12 +33,12 @@ Flexible timer for Waybar with mouse controls and CLI commands.
 2. Add to Waybar config (`~/.config/waybar/config.jsonc`):
 
    ```jsonc
-    // place the module 
+   // place the module 
    "modules-left": [
-        custom/timer
+        "custom/timer"
     ],
    
-   //define the module
+   // define the module
    "custom/timer": {
        "exec": "~/.config/waybar/scripts/timer.sh",
        "return-type": "json",

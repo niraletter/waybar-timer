@@ -39,17 +39,17 @@ Flexible timer for Waybar with mouse controls and CLI commands.
     ],
    
    // define the module
-   "custom/timer": {
+     "custom/timer": {
        "exec": "~/.config/waybar/scripts/timer.sh",
        "return-type": "json",
-       "interval": 1,
+       "format": "{}",
        "on-click": "~/.config/waybar/scripts/timer.sh click",
        "on-click-right": "~/.config/waybar/scripts/timer.sh right",
        "on-click-middle": "~/.config/waybar/scripts/timer.sh middle",
-       "on-scroll-up": "~/.config/waybar/scripts/timer.sh up",
-       "on-scroll-down": "~/.config/waybar/scripts/timer.sh down",
-       "tooltip": true
-   }
+       "on-scroll-down": "~/.config/waybar/scripts/timer.sh up",
+       "on-scroll-up": "~/.config/waybar/scripts/timer.sh down",
+       "tooltip": true,
+     }
    ```
 
 3. Add to Waybar style (`~/.config/waybar/style.css`):

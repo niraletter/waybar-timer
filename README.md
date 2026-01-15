@@ -125,11 +125,18 @@ Flexible timer for Waybar with mouse controls and CLI commands.
    }
 
    /* --- STATE: DONE --- */
-   #custom-timer.done {
-     background-color: #bfbfbf;
-     color: #11111b;
-     /*margin-top: 2;*/
+    @keyframes blink-bg {
+      0%   { background-color:rgba(186, 93, 93, 0.2); }
+      50%  { background-color:rgba(186, 93, 93, 1.0); }
+      100% { background-color:rgba(186, 93, 93, 0.2); }
    }
+
+    #custom-timer.done {
+      color: #f74f4f;
+      margin-top: 2;
+      animation: blink-bg 1.5s infinite;
+      animation-timing-function: ease-in-out;
+    }
 
    /* --- STATE: RESET ANIMATION --- */
    #custom-timer.reset {

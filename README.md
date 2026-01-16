@@ -2,7 +2,9 @@
 
 A highly efficient, event-driven timer and pomodoro module for Waybar with mouse controls and CLI commands.
 
-(<[Preview](https://user-images.githubusercontent.com/USERNAME/REPO/assets/VIDEO_ID/video.mp4)>)
+## Preview
+
+https://user-images.githubusercontent.com/USERNAME/REPO/assets/VIDEO_ID/video.mp4
 
 ## What's New
 

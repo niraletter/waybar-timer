@@ -1,6 +1,6 @@
 # Waybar Pomodoro Timer
 
-A highly efficient, event-driven timer and pomodoro module for Waybar with mouse controls and CLI commands.
+A highly efficient, timer and pomodoro module for Waybar with mouse controls and CLI commands.
 
 ## Preview
 
@@ -12,16 +12,14 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 
 ## Features
 
-- **Dual Mode: Standard Timer and Pomodoro Mode** with customizable work/break cycles and sessions
-- Mouse controls for all timer states (start, pause, edit, adjust)
-- CLI arguments for terminal commands and shortcuts
-- Desktop notifications and sound effects for all timer events
-- Dynamic visual feedback with state-specific icons and colors in both modes.
-- Customizable Presets for quick duration selection
-- Tooltip messages with helpful hints
-- Timer now persists even if Waybar is killed or restarted, and syncs across multiple instances
-- Event-driven architecture with zero CPU usage, instant updates via named pipes
-- RAM-based state storage to minimize SSD wear and disk IO
+- **Dual Mode: Standard Timer and Pomodoro** with customizable work/break cycles
+- Mouse and CLI controls (toggle, pause, resume, reset, skip)
+- Right-click to skip pomodoro sessions
+- Desktop notifications and sound effects
+- Dynamic visual feedback with state-specific icons and colors
+- Customizable presets and helpful tooltips
+- Persistent state across Waybar restarts, syncs multiple instances
+- Zero CPU usage when idle, RAM-based storage
 
 ## Requirements
 
@@ -254,21 +252,22 @@ Now use: `timer 20m5s`, `timer 1h30s`, `pomo 25m5m4s`, `pomo 40 10 2` etc.
 
 ### Mouse Controls
 
-| action       | state             | behavior                                |
-| ------------ | ----------------- | --------------------------------------- |
-| left click   | idle              | enter selection mode                    |
-|              | select            | start timer                             |
-|              | running           | pause timer                             |
-|              | paused            | resume timer                            |
-| right click  | idle              | disable module (hide)                   |
-|              | select (standard) | cycle time presets (30s -> 1m -> 5m...) |
-|              | select (pomodoro) | edit work ➡ edit break ➡ edit sessions  |
-| middle click | any               | reset / cancel                          |
-| scroll up    | select            | increase time (+1m)                     |
-|              | running           | add 1 minute to current timer           |
-| scroll down  | idle              | enter pomodoro mode                     |
-|              | select            | decrease time (-1m)                     |
-|              | running           | subtract 1 minute                       |
+| action       | state                     | behavior                                                 |
+| ------------ | ------------------------- | -------------------------------------------------------- |
+| left click   | idle                      | enter selection mode                                     |
+|              | select                    | start timer                                              |
+|              | running                   | pause timer                                              |
+|              | paused                    | resume timer                                             |
+| right click  | idle                      | disable module (hide)                                    |
+|              | select (standard)         | cycle time presets (30s -> 1m -> 5m...)                  |
+|              | select (pomodoro)         | edit work ➡ edit break ➡ edit sessions                   |
+|              | running/paused (pomodoro) | skip current session (work ➡ break or break ➡ next work) |
+| middle click | any                       | reset / cancel                                           |
+| scroll up    | select                    | increase time (+1m)                                      |
+|              | running                   | add 1 minute to current timer                            |
+| scroll down  | idle                      | enter pomodoro mode                                      |
+|              | select                    | decrease time (-1m)                                      |
+|              | running                   | subtract 1 minute                                        |
 
 ### CLI commands
 
@@ -281,6 +280,13 @@ Now use: `timer 20m5s`, `timer 1h30s`, `pomo 25m5m4s`, `pomo 40 10 2` etc.
 ./timer.sh 1h30m      # 1 hour 30 minutes
 ./timer.sh 1h20m2s    # 1 hour, 20 minutes, 2 seconds
 ./timer.sh 300        # 300 seconds
+
+# New Arguments
+./timer.sh toggle     # Toggle play/pause
+./timer.sh pause      # Force pause timer
+./timer.sh resume     # Force resume timer
+./timer.sh reset      # Reset timer to idle
+./timer.sh skip       # Skip current pomodoro session
 ```
 
 **Pomodoro:**
@@ -293,14 +299,32 @@ Syntax: `pomo [WORK] [BREAK] [SESSIONS]`
 ./timer.sh pomo 25m 5b 4s  # Explicit syntax
 ```
 
-**mouse simulation:**
+**Mouse simulation:**
 
 ```bash
 ./timer.sh click      # Left click (start/pause)
-./timer.sh right      # Right click (presets/disable)
+./timer.sh right      # Right click (presets/disable/skip)
 ./timer.sh middle     # Middle click (reset)
 ./timer.sh up         # Add (+1 minute)
 ./timer.sh down       # Sub (-1 minute)
+```
+
+### Keyboard Shortcut example Setup Examples
+
+**Hyprland** (`~/.config/hypr/hyprland.conf`):
+
+```conf
+bind = SUPER, P, exec, ~/.config/waybar/scripts/timer.sh toggle
+bind = SUPER_SHIFT, P, exec, ~/.config/waybar/scripts/timer.sh skip
+bind = SUPER_CTRL, P, exec, ~/.config/waybar/scripts/timer.sh reset
+```
+
+**i3/Sway** (`~/.config/i3/config` or `~/.config/sway/config`):
+
+```conf
+bindsym $mod+p exec ~/.config/waybar/scripts/timer.sh toggle
+bindsym $mod+Shift+p exec ~/.config/waybar/scripts/timer.sh skip
+bindsym $mod+Ctrl+p exec ~/.config/waybar/scripts/timer.sh reset
 ```
 
 ## How Pomodoro Mode works
@@ -314,11 +338,12 @@ Syntax: `pomo [WORK] [BREAK] [SESSIONS]`
    - Work session 1 starts
    - Sound effect + notification when done
    - Break session 1 starts (auto-starts by default)
+   - **Right-click to skip** current work or break session
    - Repeats until all sessions are done
 
 ## Timer Presets
 
-Right-clicking in SELECT mode (shows a plus sign in timer icon) cycles through these presets: 30s, 1m, 5m, 10m, 15m, 20m, 25m, 30m, 45m, 50m, 1h, 1h15m, 1h30m, 1h45m, 2h, 2h30m, 3h.
+Right-clicking in SELECT mode (shows a plus sign in timer icon) cycles through these presets: `1m, 5m, 10m, 15m, 20m, 25m, 30m, 45m, 50m, 1h, 1h15m, 1h30m, 1h45m, 2h, 2h30m, 3h`.
 
 ## Configuration
 
@@ -326,7 +351,7 @@ Edit the top of `timer.sh` to customize timer presets, scroll seconds, auto brea
 
 ```bash
 # --- STANDARD TIMER PRESETS (Seconds) ---
-PRESETS=(0 30 60 300 600 900 1200 1500 1800 2700 3000 3600 4500 5400 6300 7200 9000 10800)
+PRESETS=(60 300 600 900 1200 1500 1800 2700 3000 3600 4500 5400 6300 7200 9000 10800)
 SCROLL_STEP=60
 INACTIVITY_LIMIT=30
 
@@ -354,6 +379,7 @@ SOUND_COMPLETE="${HOME}/.config/waybar/sounds/timer.mp3"
 ## Technical Details (efficiency)
 
 **State Management:** Stores state in `/dev/shm/waybar_timer.json`. This is RAM, not disk, saving SSD wear and ensuring top speed. The state persists across Waybar restarts and works seamlessly across multiple Waybar instances - all instances read/write to the same state file, keeping them in perfect sync.
+
 **Event Loop:** Uses a Named Pipe (FIFO) at `/tmp/waybar_timer.fifo`.
 
 - The script sits at `read -t 1 <> pipe`
@@ -377,6 +403,8 @@ Example: `RUNNING|300|1703123456|0|1703123456|2|0|0|0|0|0|0|0`
 ## Notifications & Sounds
 
 When a timer or pomodoro session completes, the script sends a notification via `notify-send` and plays a sound effect via `paplay`.
+
+All notifications use normal urgency level to prevent them from becoming sticky or persistent in certain notification daemons.
 
 **Default behavior (single sound file):**
 

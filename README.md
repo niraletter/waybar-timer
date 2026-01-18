@@ -78,7 +78,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
    Add these styles and customize colors, fonts, and animations to your preference.
 
    <details>
-   <summary><strong>Click to Expand CSS styling</strong></summary>
+   <summary><strong>click to expand CSS styling</strong></summary>
 
    ```css
     /* Waybar Timer */
@@ -88,7 +88,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
         padding: 0 9px;
         font-size: 15px;
         border-radius: 15px;
-        font-family: "Doto";  /* place your font here */
+        font-family: "Doto",  /* place your font here */
          /* Link for the above font https://fonts.google.com/specimen/Doto  */
         font-weight: 900;
         transition: all 0.2s ease;

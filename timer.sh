@@ -5,7 +5,7 @@
 # -----------------------------------------------------------------------------
 
 # --- STANDARD TIMER PRESETS (Seconds) ---
-PRESETS=(0 30 60 300 600 900 1200 1500 1800 2700 3000 3600 4500 5400 6300 7200 9000 10800)
+PRESETS=(60 300 600 900 1200 1500 1800 2700 3000 3600 4500 5400 6300 7200 9000 10800)
 SCROLL_STEP=60
 INACTIVITY_LIMIT=30
 
@@ -42,6 +42,7 @@ ICON_POMO_HALF=""
 ICON_POMO_END=""
 ICON_POMO_DONE=""
 ICON_POMO_BREAK=""
+
 
 # Files (Optimized to use RAM instead of Disk)
 STATE_FILE="/dev/shm/waybar_timer.json"
@@ -108,6 +109,83 @@ if [ -n "$1" ]; then
     NEW_ACT="$NOW"
 
     case "$1" in
+        # --- NEW CLI ARGUMENTS ---
+        "toggle")
+            # Toggle play/pause
+            if [ "$STATE" == "RUNNING" ]; then
+                ELAPSED=$(( NOW - START_TIME ))
+                REM=$(( SEC_SET - ELAPSED ))
+                WS "PAUSED" "$SEC_SET" "0" "$REM" "$NEW_ACT" "$PRESET_IDX" "$MODE" "$P_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+            elif [ "$STATE" == "PAUSED" ]; then
+                NEW_START=$(( NOW - SEC_SET + PAUSE_REM ))
+                WS "RUNNING" "$SEC_SET" "$NEW_START" "0" "$NEW_ACT" "$PRESET_IDX" "$MODE" "$P_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+            fi
+            trigger_update; exit 0
+            ;;
+
+        "pause")
+            # Force pause
+            if [ "$STATE" == "RUNNING" ]; then
+                ELAPSED=$(( NOW - START_TIME ))
+                REM=$(( SEC_SET - ELAPSED ))
+                WS "PAUSED" "$SEC_SET" "0" "$REM" "$NEW_ACT" "$PRESET_IDX" "$MODE" "$P_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+                trigger_update
+            fi
+            exit 0
+            ;;
+
+        "resume")
+            # Force resume
+            if [ "$STATE" == "PAUSED" ]; then
+                NEW_START=$(( NOW - SEC_SET + PAUSE_REM ))
+                WS "RUNNING" "$SEC_SET" "$NEW_START" "0" "$NEW_ACT" "$PRESET_IDX" "$MODE" "$P_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+                trigger_update
+            fi
+            exit 0
+            ;;
+
+        "reset")
+            # Reset to idle
+            WS "RESET_ANIM" "0" "0" "0" "$NEW_ACT" "0" "0" "0" "0" "0" "0" "0" "0"
+            trigger_update; exit 0
+            ;;
+
+        "skip")
+            # Skip current pomodoro session
+            if [ "$MODE" == "1" ] && [ "$STATE" == "RUNNING" ] || [ "$STATE" == "PAUSED" ]; then
+                if [ "$P_STAGE" == "0" ]; then
+                    # Skip work, go to break
+                    play_sound "$SOUND_BREAK_START"
+                    notify-send -u normal -t 3500 -i tea "Pomodoro" "Work Session Skipped! Starting Break." &
+                    NEW_STAGE=1; NEW_SET=$(( P_BREAK_LEN * 60 ))
+                    if [ "$POMO_AUTO_BREAK" = true ]; then
+                        WS "POMO_MSG" "$NEW_SET" "$NOW" "0" "$NOW" "$PRESET_IDX" "1" "$NEW_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+                    else
+                        WS "PAUSED" "$NEW_SET" "0" "$NEW_SET" "$NOW" "$PRESET_IDX" "1" "$NEW_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+                    fi
+                else
+                    # Skip break, go to next work session or complete
+                    NEW_CURRENT=$(( P_CURRENT + 1 ))
+                    if [ "$NEW_CURRENT" -gt "$P_TOTAL" ]; then
+                        play_sound "$SOUND_COMPLETE"
+                        notify-send -u normal -t 5000 -i trophy "Pomodoro" "All Sessions Completed!" &
+                        WS "DONE" "0" "0" "0" "$NOW" "0" "1" "0" "$P_TOTAL" "$P_TOTAL" "0" "0" "0"
+                    else
+                        play_sound "$SOUND_WORK_START"
+                        notify-send -u normal -t 3500 -i clock "Pomodoro" "Break Skipped! Starting Work Session $NEW_CURRENT/$P_TOTAL." &
+                        NEW_STAGE=0; NEW_SET=$(( P_WORK_LEN * 60 ))
+                        if [ "$POMO_AUTO_WORK" = true ]; then
+                            WS "POMO_MSG" "$NEW_SET" "$NOW" "0" "$NOW" "$PRESET_IDX" "1" "$NEW_STAGE" "$NEW_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+                        else
+                            WS "PAUSED" "$NEW_SET" "0" "$NEW_SET" "$NOW" "$PRESET_IDX" "1" "$NEW_STAGE" "$NEW_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
+                        fi
+                    fi
+                fi
+                trigger_update
+            fi
+            exit 0
+            ;;
+
         # --- POMODORO CLI ARGUMENTS ---
         "pomo")
             shift # Remove 'pomo' from arguments
@@ -224,7 +302,12 @@ if [ -n "$1" ]; then
             ;;
 
         "right")
-             if [ "$STATE" == "IDLE" ]; then
+             # SKIP SESSION IN POMODORO MODE WHEN RUNNING/PAUSED
+             if [ "$MODE" == "1" ] && ([ "$STATE" == "RUNNING" ] || [ "$STATE" == "PAUSED" ]); then
+                 $0 skip
+                 exit 0
+             # REGULAR RIGHT CLICK BEHAVIOR
+             elif [ "$STATE" == "IDLE" ]; then
                  WS "DISABLED" "0" "0" "0" "$NEW_ACT" "0" "0" "0" "0" "0" "0" "0" "0"
              elif [ "$STATE" == "SELECT" ]; then
                  if [ "$MODE" == "0" ]; then
@@ -354,7 +437,7 @@ while true; do
             if [ "$P_STAGE" == "0" ]; then TEXT="Work $P_CURRENT/$P_TOTAL"; ICON="$ICON_POMO_START"; else TEXT="Break Time"; ICON="$ICON_POMO_BREAK"; fi
             echo "{\"text\": \"$ICON $TEXT\", \"class\": \"pomo_msg\"}"
             # Short sleep for animation, can stay as sleep or be read -t
-            sleep 1.5
+            sleep 1.2
             WS "RUNNING" "$SEC_SET" "$NOW" "0" "$NEW_ACT" "$PRESET_IDX" "$MODE" "$P_STAGE" "$P_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
             continue ;;
 
@@ -363,7 +446,7 @@ while true; do
             if [ "$REM" -le 0 ]; then
                 if [ "$MODE" == "0" ]; then
                     play_sound "$SOUND_TIMER_DONE"
-                    notify-send -u critical -t 3500 -i clock "Timer" "Timer Finished!" &
+                    notify-send -u normal -t 3500 -i clock "Timer" "Timer Finished!" &
                     WS "DONE" "$SEC_SET" "0" "0" "$NOW" "0" "0" "0" "0" "0" "0" "0" "0"
                 else
                     if [ "$P_STAGE" == "0" ]; then
@@ -379,11 +462,11 @@ while true; do
                         NEW_CURRENT=$(( P_CURRENT + 1 ))
                         if [ "$NEW_CURRENT" -gt "$P_TOTAL" ]; then
                             play_sound "$SOUND_COMPLETE"
-                            notify-send -u critical -t 5000 -i trophy "Pomodoro" "All Sessions Completed!" &
+                            notify-send -u normal -t 5000 -i trophy "Pomodoro" "All Sessions Completed!" &
                             WS "DONE" "0" "0" "0" "$NOW" "0" "1" "0" "$P_TOTAL" "$P_TOTAL" "0" "0" "0"
                         else
                             play_sound "$SOUND_WORK_START"
-                            notify-send -u critical -t 3500 -i clock "Pomodoro" "Break Finished! Back to work." &
+                            notify-send -u normal -t 3500 -i clock "Pomodoro" "Break Finished! Back to work." &
                             NEW_STAGE=0; NEW_SET=$(( P_WORK_LEN * 60 ))
                             if [ "$POMO_AUTO_WORK" = true ]; then
                                 WS "POMO_MSG" "$NEW_SET" "$NOW" "0" "$NOW" "$PRESET_IDX" "1" "$NEW_STAGE" "$NEW_CURRENT" "$P_TOTAL" "$P_WORK_LEN" "$P_BREAK_LEN" "$P_EDIT_FOCUS"
@@ -403,7 +486,7 @@ while true; do
                     elif [ "$REM" -le $(( TOTAL_DUR / 2 )) ]; then ICON="$ICON_POMO_HALF"; CLASS="running"
                     else ICON="$ICON_POMO_START"; CLASS="running"; fi
                 fi
-                TOOLTIP="Pomodoro: $([ "$P_STAGE" == 0 ] && echo Work || echo Break) ($P_CURRENT/$P_TOTAL)\nLeft Click: Pause\nScroll: Adjust Time (± 1m)\nMiddle Click: Reset"
+                TOOLTIP="Pomodoro: $([ "$P_STAGE" == 0 ] && echo Work || echo Break) ($P_CURRENT/$P_TOTAL)\nLeft Click: Pause\nRight Click: Skip Session\nScroll: Adjust Time (± 1m)\nMiddle Click: Reset"
             else
                 if [ "$REM" -le 30 ] && [ "$REM" -gt 27 ]; then ICON="$ICON_WARNING"; CLASS="warning"
                 elif [ "$REM" -le 10 ]; then ICON="$ICON_WARNING"; CLASS="warning"
@@ -414,7 +497,7 @@ while true; do
             ;;
 
         "PAUSED")
-            if [ "$MODE" == "1" ]; then ICON="$ICON_POMO_BREAK"; TOOLTIP="Pomodoro Paused\nLeft Click: Resume\nScroll: Adjust Time (± 1m)\nMiddle Click: Reset"
+            if [ "$MODE" == "1" ]; then ICON="$ICON_POMO_BREAK"; TOOLTIP="Pomodoro Paused\nLeft Click: Resume\nRight Click: Skip Session\nScroll: Adjust Time (± 1m)\nMiddle Click: Reset"
             else ICON="$ICON_PAUSE"; TOOLTIP="Timer Paused\nLeft Click: Resume\nScroll: Adjust Time (± 1m)\nMiddle Click: Reset"; fi
             TEXT="$(format_time $PAUSE_REM)"; CLASS="paused" ;;
 

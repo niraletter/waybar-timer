@@ -1,6 +1,5 @@
 Here is the complete `README.md` file with the new process management details integrated.
 
-````markdown
 # Waybar Pomodoro Timer
 
 A highly efficient, timer and pomodoro module for Waybar with mouse controls and CLI commands.
@@ -41,7 +40,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
    curl -L https://raw.githubusercontent.com/nirabyte/waybar-timer/main/sounds/timer.mp3 -o ~/.config/waybar/sounds/timer.mp3 && \
    chmod +x ~/.config/waybar/scripts/timer.sh
    ```
-````
+
 
 Or manually:
 

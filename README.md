@@ -40,14 +40,14 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
    ```
 
 
-Or manually:
-
-```bash
-mkdir -p ~/.config/waybar/scripts ~/.config/waybar/sounds
-# Save the script code to timer.sh
-chmod +x ~/.config/waybar/scripts/timer.sh
-# Add your timer.mp3 sound or your audio files to ~/.config/waybar/sounds/
-```
+    Or manually:
+    
+    ```bash
+    mkdir -p ~/.config/waybar/scripts ~/.config/waybar/sounds
+    # Save the script code to timer.sh
+    chmod +x ~/.config/waybar/scripts/timer.sh
+    # Add your timer.mp3 sound or your audio files to ~/.config/waybar/sounds/
+    ```
 
 2. **Add or update to waybar config (~/.config/waybar/config.jsonc)**
 

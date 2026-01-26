@@ -185,9 +185,6 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 
 4. **Setup sound effects (optional)**
 
-> [!NOTE]
-> The above installation script automatically creates and puts the audio file in your `.config/waybar/sounds`
-
    Create the sounds directory if it's not already:
 
    ```bash
@@ -217,6 +214,9 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
    ```
 
    The script uses `paplay` (compatible with both PulseAudio and PipeWire) to play sounds.
+
+> [!NOTE]
+> The above installation script automatically creates and puts the audio file in your `.config/waybar/sounds`
 
 5. **Restart your waybar**
 

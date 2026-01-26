@@ -39,15 +39,14 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
    chmod +x ~/.config/waybar/scripts/timer.sh
    ```
 
+   Or manually:
 
-    Or manually:
-    
-    ```bash
-    mkdir -p ~/.config/waybar/scripts ~/.config/waybar/sounds
-    # Save the script code to timer.sh
-    chmod +x ~/.config/waybar/scripts/timer.sh
-    # Add your timer.mp3 sound or your audio files to ~/.config/waybar/sounds/
-    ```
+   ```bash
+   mkdir -p ~/.config/waybar/scripts ~/.config/waybar/sounds
+   # Save the script code to timer.sh
+   chmod +x ~/.config/waybar/scripts/timer.sh
+   # Add your timer.mp3 sound or your audio files to ~/.config/waybar/sounds/
+   ```
 
 2. **Add or update to waybar config (~/.config/waybar/config.jsonc)**
 
@@ -185,8 +184,9 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
    </details>
 
 4. **Setup sound effects (optional)**
-
-   Create the sounds directory:
+5. > [!NOTE]
+   > The above installation script automatically creates and puts the audio file in your `.config/waybar/sounds`
+   > Create the sounds directory if it's not already:
 
    ```bash
    mkdir -p ~/.config/waybar/sounds
@@ -216,7 +216,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 
    The script uses `paplay` (compatible with both PulseAudio and PipeWire) to play sounds.
 
-5. **Restart your waybar**
+6. **Restart your waybar**
 
 - For Omarchy users:
 
@@ -276,12 +276,6 @@ I have updated the table to reflect the specific behaviors found in your script,
 |                  | Any other state    | **Decrease Time** (-1 minute)                                |
 
 ---
-
-### How to paste this into your README:
-
-1.  Open `README.md`.
-2.  Find the `### Mouse Controls` section.
-3.  Replace the existing table with the Markdown code above.
 
 ### CLI commands
 
@@ -473,4 +467,3 @@ Contributions are welcome ❤️. If you have ideas for improvements or find bug
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-

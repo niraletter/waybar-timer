@@ -1,5 +1,3 @@
-Here is the complete `README.md` file with the new process management details integrated.
-
 # Waybar Pomodoro Timer
 
 A highly efficient, timer and pomodoro module for Waybar with mouse controls and CLI commands.

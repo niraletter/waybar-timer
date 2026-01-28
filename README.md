@@ -253,10 +253,6 @@ Now use: `timer 20m5s`, `timer 1h30s`, `pomo 25m5m4s`, `pomo 40 10 2` etc.
 
 ## Usage
 
-Based on the `CONTROLLER` logic in the script you provided, here is the updated **Mouse Controls** section for your README.
-
-I have updated the table to reflect the specific behaviors found in your script, particularly regarding **Right Click** (which behaves differently in Standard vs. Pomodoro modes) and the **Scroll** logic.
-
 ### Mouse Controls
 
 | Input            | State              | Behavior                                                     |

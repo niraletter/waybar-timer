@@ -273,6 +273,8 @@ Now use: `timer 20m5s`, `timer 1h30s`, `pomo 25m5m4s`, `pomo 40 10 2` etc.
 | **Scroll Down**  | Idle               | Enter **Pomodoro Selection** mode                            |
 |                  | Any other state    | **Decrease Time** (-1 minute)                                |
 
+> [!NOTE]
+> Set `POMO_ENABLED=false` in `timer.sh` to disable pomodoro mode. When disabled, scroll down behaves like standard timer selection and `pomo` CLI is ignored; any active pomodoro session resets to idle.
 ---
 
 ### CLI commands
@@ -367,6 +369,7 @@ POMO_PRESETS=(
 )
 
 # Pomodoro Settings
+POMO_ENABLED=true
 POMO_AUTO_BREAK=true
 POMO_AUTO_WORK=true
 

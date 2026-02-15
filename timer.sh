@@ -13,6 +13,7 @@ POMO_PRESETS=(
 )
 
 # Pomodoro Settings
+POMO_ENABLED=true
 POMO_AUTO_BREAK=true
 POMO_AUTO_WORK=true
 
@@ -99,6 +100,23 @@ if [ -n "$1" ]; then
     printf -v NOW '%(%s)T' -1
     NEW_ACT="$NOW"
 
+    if [ "$POMO_ENABLED" != true ] && [ "$MODE" == "1" ]; then
+        WS "IDLE" "0" "0" "0" "$NEW_ACT" "0" "0" "0" "0" "0" "0" "0" "0"
+        STATE="IDLE"
+        SEC_SET=0
+        START_TIME=0
+        PAUSE_REM=0
+        LAST_ACT="$NEW_ACT"
+        PRESET_IDX=0
+        MODE=0
+        P_STAGE=0
+        P_CURRENT=0
+        P_TOTAL=0
+        P_WORK_LEN=0
+        P_BREAK_LEN=0
+        P_EDIT_FOCUS=0
+    fi
+
     case "$1" in
         "toggle")
             # Toggle play/pause
@@ -178,6 +196,9 @@ if [ -n "$1" ]; then
 
         # --- POMODORO CLI ARGUMENTS ---
         "pomo")
+            if [ "$POMO_ENABLED" != true ]; then
+                exit 0
+            fi
             shift 
             ARGS="$*"
 
@@ -209,11 +230,11 @@ if [ -n "$1" ]; then
 
         # --- IDLE STATE ---
             if [ "$STATE" == "IDLE" ]; then
-                if [ "$1" == "up" ]; then
-                    WS "SELECT" "0" "0" "0" "$NEW_ACT" "0" "0" "0" "0" "0" "0" "0" "0"
-                else
+                if [ "$POMO_ENABLED" = true ] && [ "$1" == "down" ]; then
                     read -r w b s <<< "${POMO_PRESETS[0]}"
                     WS "SELECT" "$((w*60))" "0" "0" "$NEW_ACT" "0" "1" "0" "1" "$s" "$w" "$b" "0"
+                else
+                    WS "SELECT" "0" "0" "0" "$NEW_ACT" "0" "0" "0" "0" "0" "0" "0" "0"
                 fi
                 trigger_update; exit 0
             fi
@@ -374,6 +395,23 @@ while true; do
     read_state
     printf -v NOW '%(%s)T' -1
 
+    if [ "$POMO_ENABLED" != true ] && [ "$MODE" == "1" ]; then
+        WS "IDLE" "0" "0" "0" "$NOW" "0" "0" "0" "0" "0" "0" "0" "0"
+        STATE="IDLE"
+        SEC_SET=0
+        START_TIME=0
+        PAUSE_REM=0
+        LAST_ACT="$NOW"
+        PRESET_IDX=0
+        MODE=0
+        P_STAGE=0
+        P_CURRENT=0
+        P_TOTAL=0
+        P_WORK_LEN=0
+        P_BREAK_LEN=0
+        P_EDIT_FOCUS=0
+    fi
+
     TEXT=""
     ICON=""
     CLASS="$STATE"
@@ -393,7 +431,11 @@ while true; do
             ICON="$ICON_IDLE"
             TEXT="00:00"
             CLASS="idle"
-            TOOLTIP="Timer Idle\nScroll Up: Pomodoro Mode\nScroll Down: Standard Timer\nLeft Click: Set Timer\nRight Click: Disable"
+            if [ "$POMO_ENABLED" = true ]; then
+                TOOLTIP="Timer Idle\nScroll Up: Pomodoro Mode\nScroll Down: Standard Timer\nLeft Click: Set Timer\nRight Click: Disable"
+            else
+                TOOLTIP="Timer Idle\nScroll: Standard Timer\nLeft Click: Set Timer\nRight Click: Disable"
+            fi
 
             if [ $(( NOW - LAST_ACT )) -gt "$INACTIVITY_LIMIT" ]; then
                 WS "DISABLED" "0" "0" "0" "$NOW" "0" "0" "0" "0" "0" "0" "0" "0"

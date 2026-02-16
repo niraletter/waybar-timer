@@ -25,7 +25,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 
 - Waybar (obviously)
 - Notification daemon (for desktop notifications e.g. dunst, libnotify, mako, etc.)
-- Nerd Font installed for icons (e.g., JetBrains Mono, Cascadia Code, Doto, etc.)
+- Nerd Font installed for icons (e.g., JetBrains Mono, Cascadia Code, etc.)
 - PulseAudio or PipeWire (for sound playback via paplay)
 
 ## Installation

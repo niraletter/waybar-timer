@@ -8,7 +8,7 @@ https://github.com/user-attachments/assets/3bb65cbd-3923-4130-a2ee-8e5e86375802
 
 ## What's New
 
-Check out the latest updates and improvements! See [Release Notes](https://github.com/nirabyte/waybar-timer/releases) for detailed changelog.
+Check out the latest updates and improvements! See [Release Notes](https://github.com/niraletter/waybar-timer/releases) for detailed changelog.
 
 ## Features
 
@@ -34,8 +34,8 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 
    ```bash
    mkdir -p ~/.config/waybar/scripts ~/.config/waybar/sounds && \
-   curl -L https://raw.githubusercontent.com/nirabyte/waybar-timer/main/timer.sh -o ~/.config/waybar/scripts/timer.sh && \
-   curl -L https://raw.githubusercontent.com/nirabyte/waybar-timer/main/sounds/timer.mp3 -o ~/.config/waybar/sounds/timer.mp3 && \
+   curl -L https://raw.githubusercontent.com/niraletter/waybar-timer/main/timer.sh -o ~/.config/waybar/scripts/timer.sh && \
+   curl -L https://raw.githubusercontent.com/niraletter/waybar-timer/main/sounds/timer.mp3 -o ~/.config/waybar/sounds/timer.mp3 && \
    chmod +x ~/.config/waybar/scripts/timer.sh
    ```
 

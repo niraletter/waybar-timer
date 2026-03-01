@@ -88,7 +88,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
         padding: 0 9px;
         font-size: 15px;
         border-radius: 15px;
-        font-family: "Doto",  /* place your font here */
+        font-family: "Doto";  /* place your font here */
          /* Link for the above font https://fonts.google.com/specimen/Doto  */
         font-weight: 900;
         transition: all 0.2s ease;

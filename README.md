@@ -220,14 +220,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 
 5. **Restart your waybar**
 
-- For Omarchy users:
-
-  ```bash
-  omarchy-restart-waybar
-  # Or Toggle with Super+Shift+Space
-  ```
-
-- Or run:
+- Run:
 
   ```bash
   pkill waybar && waybar &

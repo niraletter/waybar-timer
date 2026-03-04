@@ -223,7 +223,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 - Run:
 
   ```bash
-  pkill waybar && waybar &
+  pkill -USR2 waybar
   ```
 
 ## Alias (Optional)

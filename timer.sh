@@ -7,7 +7,7 @@ PRESETS=(60 300 600 900 1200 1500 1800 2700 3000 3600 4500 5400 6300 7200 9000 1
 SCROLL_STEP=60
 INACTIVITY_LIMIT=30
 
-# --- POMODORO INITIAL PRESET ---
+# --- POMODORO PRESET ---
 POMO_PRESETS=(
     "25 5 4"
 )
@@ -43,7 +43,6 @@ ICON_POMO_DONE=""
 ICON_POMO_BREAK=""
 
 
-# Files (Stored in RAM)
 STATE_FILE="/dev/shm/waybar_timer.json"
 PIPE_FILE="/tmp/waybar_timer_$$.fifo"
 
@@ -61,7 +60,6 @@ play_sound() {
 }
 
 # STATE MANAGEMENT
-
 init_state() {
     printf -v NOW '%(%s)T' -1
     echo "DISABLED|0|0|0|$NOW|0|0|0|1|1|5|1|0" > "$STATE_FILE"
@@ -370,7 +368,6 @@ fi
 PID_FILE="/tmp/waybar_timer.pid"
 
 cleanup() {
-    # Close FD 3 if open
     exec 3>&-
     rm -f "$PIPE_FILE" "$PID_FILE"
     exit 0

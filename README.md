@@ -18,7 +18,7 @@ Check out the latest updates and improvements! See [Release Notes](https://githu
 - Desktop notifications and sound effects
 - Dynamic visual feedback with state-specific icons and colors
 - Customizable presets and helpful tooltips
-- Persistent state across Waybar restarts, syncs multiple instances
+- Persistent state across Waybar restarts, syncs across multiple waybar instances
 - minimal system resource footprint
 
 ## Requirements

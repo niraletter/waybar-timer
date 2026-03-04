@@ -45,7 +45,8 @@ ICON_POMO_BREAK=""
 
 # Files (Stored in RAM)
 STATE_FILE="/dev/shm/waybar_timer.json"
-PIPE_FILE="/tmp/waybar_timer.fifo"
+PIPE_FILE="/tmp/waybar_timer_$$.fifo"
+
 
 # --- HELPER FUNCTION FOR SOUND ---
 play_sound() {
@@ -86,9 +87,9 @@ format_time() {
 }
 
 trigger_update() {
-    if [ -p "$PIPE_FILE" ]; then
-        echo "1" > "$PIPE_FILE" &
-    fi
+    for f in /tmp/waybar_timer_*.fifo; do
+        [ -p "$f" ] && echo "1" > "$f" &
+    done
 }
 
 # CONTROLLER
@@ -199,7 +200,7 @@ if [ -n "$1" ]; then
             if [ "$POMO_ENABLED" != true ]; then
                 exit 0
             fi
-            shift 
+            shift
             ARGS="$*"
 
             # Defaults
@@ -377,14 +378,6 @@ cleanup() {
 
 trap cleanup SIGTERM SIGINT EXIT
 
-if [ -f "$PID_FILE" ]; then
-    OLD_PID=$(cat "$PID_FILE")
-    if [ -n "$OLD_PID" ] && [ "$OLD_PID" != "$$" ] && kill -0 "$OLD_PID" 2>/dev/null; then
-        kill "$OLD_PID" 2>/dev/null
-    fi
-fi
-echo $$ > "$PID_FILE"
-
 if [ ! -f "$STATE_FILE" ]; then init_state; fi
 
 if [ ! -p "$PIPE_FILE" ]; then mkfifo "$PIPE_FILE"; fi
@@ -428,7 +421,7 @@ while true; do
             TOOLTIP="Timer Disabled\nLeft Click: Activate"
             echo "{\"text\": \"$ICON\", \"tooltip\": \"$TOOLTIP\", \"class\": \"$CLASS\"}"
 
-            read -n 1 _ <&3
+            read -t 1 -n 1 _ <&3
             continue ;;
 
         "IDLE")
